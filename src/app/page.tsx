@@ -1,6 +1,8 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Clock, Users, Calendar, BarChart3 } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { getCurrentUser } from '@/lib/utils'
 
 function Dashboard() {
   return (
@@ -163,7 +165,22 @@ function SignInPage() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  // Check if user is authenticated and get their role
+  const user = await getCurrentUser();
+  
+  // If user is authenticated, redirect them to their role-specific page
+  if (user) {
+    if (user.role === 'admin') {
+      redirect('/admin');
+    } else if (user.role === 'employee') {
+      redirect('/employee');
+    } else if (user.role === 'manager') {
+      redirect('/manager'); // You can create this later
+    }
+  }
+
+  // If not authenticated, show the sign-in page
   return (
     <>
       <SignedIn>
